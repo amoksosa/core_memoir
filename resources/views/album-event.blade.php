@@ -36,70 +36,179 @@
 @endphp
 
 <x-layouts.app title="{{ $event->name }} Album - Core Memoir" :guest="true">
-    <main class="min-h-screen {{ $pageClass }} px-[4vw] py-10 md:py-16">
-        <div class="mx-auto max-w-[1200px]">
-            <section class="rounded-[34px] bg-white/25 p-8 shadow-xl backdrop-blur md:p-10">
-                <p class="text-[14px] font-black uppercase tracking-[0.28em] opacity-70">
+    <style>
+        .cm-album-wrap {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .cm-photo-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 8px !important;
+            width: 100%;
+        }
+
+        .cm-photo-item {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .cm-photo-frame {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .cm-photo-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: block;
+            border-radius: 6px;
+        }
+
+        .cm-photo-name {
+            margin-top: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 9px;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        @media (min-width: 768px) {
+            .cm-photo-grid {
+                gap: 24px !important;
+            }
+
+            .cm-photo-img {
+                border-radius: 14px;
+            }
+
+            .cm-photo-name {
+                margin-top: 12px;
+                font-size: 15px;
+            }
+        }
+    </style>
+
+    <main class="min-h-screen {{ $pageClass }} px-3 py-6 md:px-[4vw] md:py-16">
+        <div class="cm-album-wrap">
+            <section class="rounded-[26px] bg-white/25 p-5 shadow-xl backdrop-blur md:rounded-[34px] md:p-10">
+                <p class="text-[11px] font-black uppercase tracking-[0.22em] opacity-70 md:text-[14px] md:tracking-[0.28em]">
                     Core Memoir Album
                 </p>
 
-                <h1 class="mt-4 [font-family:Georgia,'Times_New_Roman',serif] text-[54px] font-normal leading-[0.95] md:text-[86px] {{ $fontClass }}">
+                <h1 class="mt-4 [font-family:Georgia,'Times_New_Roman',serif] text-[38px] font-normal leading-[0.95] md:text-[86px] {{ $fontClass }}">
                     {{ $event->name }}
                 </h1>
 
-                <p class="mt-4 text-[20px] font-black opacity-80">
+                <p class="mt-4 text-[16px] font-black opacity-80 md:text-[20px]">
                     {{ $photos->count() }} photos captured
                 </p>
 
                 <a
                     href="{{ route('events.guest', $event->code) }}"
-                    class="mt-8 inline-flex h-[58px] items-center justify-center rounded-full bg-[#704500] px-8 text-[18px] font-black text-white hover:bg-[#583600]"
+                    class="mt-6 inline-flex h-[48px] items-center justify-center rounded-full bg-[#704500] px-6 text-[14px] font-black text-white hover:bg-[#583600] md:mt-8 md:h-[58px] md:px-8 md:text-[18px]"
                 >
                     Back to Camera
                 </a>
             </section>
 
-            <section class="mt-8 rounded-[34px] bg-white/25 p-8 shadow-xl backdrop-blur md:p-10">
+            <section class="mt-5 rounded-[26px] bg-white/25 p-3 shadow-xl backdrop-blur md:mt-8 md:rounded-[34px] md:p-8">
                 @if ($photos->count() === 0)
-                    <p class="text-[20px] font-black opacity-80">
+                    <p class="p-4 text-[16px] font-black opacity-80 md:text-[20px]">
                         No photos uploaded yet.
                     </p>
                 @else
-                    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    <div class="cm-photo-grid">
                         @foreach ($photos as $photo)
-                            <div>
-                                <div class="
-                                    @if ($frame === 'polaroid')
-                                        rounded-md bg-white p-3 pb-10 shadow-2xl rotate-[-1deg]
-                                    @elseif ($frame === 'film')
-                                        rounded-xl border-4 border-black bg-black p-2 shadow-2xl
-                                    @elseif ($frame === 'gold')
-                                        rounded-2xl border-4 border-yellow-400 bg-yellow-100 p-2 shadow-2xl
-                                    @elseif ($frame === 'soft')
-                                        rounded-[2rem] border border-rose-200 bg-white/70 p-2 shadow-xl
-                                    @elseif ($frame === 'neon')
-                                        rounded-2xl border-2 border-fuchsia-400 bg-black p-2 shadow-[0_0_28px_rgba(217,70,239,0.55)]
-                                    @elseif ($frame === 'journal')
-                                        rounded-xl border border-stone-300 bg-[#fff8e8] p-3 shadow-xl rotate-[1deg]
-                                    @else
-                                        rounded-2xl border border-white/50 bg-white/20 p-1 shadow-xl
-                                    @endif
-                                ">
-                                    <img
-                                        src="{{ $photo->image_url }}"
-                                        alt="Event upload"
-                                        class="aspect-square w-full object-cover rounded-xl"
-                                    >
+                            <div class="cm-photo-item">
+                                @if ($frame === 'polaroid')
+                                    <div class="cm-photo-frame rotate-[-1deg] rounded-sm bg-white p-1 pb-4 shadow-lg md:rounded-md md:p-3 md:pb-10 md:shadow-2xl">
+                                        <img
+                                            src="{{ $photo->image_url }}"
+                                            alt="Event upload"
+                                            class="cm-photo-img"
+                                        >
 
-                                    @if ($frame === 'polaroid')
-                                        <p class="mt-3 truncate text-center text-sm font-bold text-slate-700">
+                                        <p class="cm-photo-name text-slate-700">
                                             {{ $photo->guest_name ?: 'Guest' }}
                                         </p>
-                                    @endif
-                                </div>
+                                    </div>
+                                @elseif ($frame === 'film')
+                                    <div class="cm-photo-frame rounded-md border-2 border-black bg-black p-1 shadow-lg md:rounded-xl md:border-4 md:p-2 md:shadow-2xl">
+                                        <img
+                                            src="{{ $photo->image_url }}"
+                                            alt="Event upload"
+                                            class="cm-photo-img"
+                                        >
+                                    </div>
 
-                                @if ($frame !== 'polaroid')
-                                    <p class="mt-3 truncate text-sm font-bold opacity-80">
+                                    <p class="cm-photo-name opacity-80">
+                                        {{ $photo->guest_name ?: 'Guest' }}
+                                    </p>
+                                @elseif ($frame === 'gold')
+                                    <div class="cm-photo-frame rounded-md border-2 border-yellow-400 bg-yellow-100 p-1 shadow-lg md:rounded-2xl md:border-4 md:p-2 md:shadow-2xl">
+                                        <img
+                                            src="{{ $photo->image_url }}"
+                                            alt="Event upload"
+                                            class="cm-photo-img"
+                                        >
+                                    </div>
+
+                                    <p class="cm-photo-name opacity-80">
+                                        {{ $photo->guest_name ?: 'Guest' }}
+                                    </p>
+                                @elseif ($frame === 'soft')
+                                    <div class="cm-photo-frame rounded-lg border border-rose-200 bg-white/70 p-1 shadow-lg md:rounded-[2rem] md:p-2 md:shadow-xl">
+                                        <img
+                                            src="{{ $photo->image_url }}"
+                                            alt="Event upload"
+                                            class="cm-photo-img"
+                                        >
+                                    </div>
+
+                                    <p class="cm-photo-name opacity-80">
+                                        {{ $photo->guest_name ?: 'Guest' }}
+                                    </p>
+                                @elseif ($frame === 'neon')
+                                    <div class="cm-photo-frame rounded-md border border-fuchsia-400 bg-black p-1 shadow-[0_0_10px_rgba(217,70,239,0.45)] md:rounded-2xl md:border-2 md:p-2 md:shadow-[0_0_28px_rgba(217,70,239,0.55)]">
+                                        <img
+                                            src="{{ $photo->image_url }}"
+                                            alt="Event upload"
+                                            class="cm-photo-img"
+                                        >
+                                    </div>
+
+                                    <p class="cm-photo-name opacity-80">
+                                        {{ $photo->guest_name ?: 'Guest' }}
+                                    </p>
+                                @elseif ($frame === 'journal')
+                                    <div class="cm-photo-frame rotate-[1deg] rounded-md border border-stone-300 bg-[#fff8e8] p-1 shadow-lg md:rounded-xl md:p-3 md:shadow-xl">
+                                        <img
+                                            src="{{ $photo->image_url }}"
+                                            alt="Event upload"
+                                            class="cm-photo-img"
+                                        >
+                                    </div>
+
+                                    <p class="cm-photo-name opacity-80">
+                                        {{ $photo->guest_name ?: 'Guest' }}
+                                    </p>
+                                @else
+                                    <div class="cm-photo-frame rounded-md border border-white/50 bg-white/20 p-1 shadow-lg md:rounded-2xl md:shadow-xl">
+                                        <img
+                                            src="{{ $photo->image_url }}"
+                                            alt="Event upload"
+                                            class="cm-photo-img"
+                                        >
+                                    </div>
+
+                                    <p class="cm-photo-name opacity-80">
                                         {{ $photo->guest_name ?: 'Guest' }}
                                     </p>
                                 @endif

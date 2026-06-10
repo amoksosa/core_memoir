@@ -44,8 +44,8 @@ class EventController extends Controller
         ]);
 
         return redirect()
-            ->route('events.guest', $event->code)
-            ->with('success', 'Event created successfully.');
+    ->route('events.qr', $event)
+    ->with('success', 'Event created successfully.');
     }
 
     public function guestPage(Request $request, $code)
@@ -174,4 +174,14 @@ class EventController extends Controller
 
         return back()->with('success', 'Photo uploaded successfully!');
     }
+
+    public function qrPage(Event $event)
+{
+    $guestLink = rtrim(config('app.url'), '/') . route('events.guest', $event->code, false);
+
+    return view('event-qr', [
+        'event' => $event,
+        'guestLink' => $guestLink,
+    ]);
+}
 }
